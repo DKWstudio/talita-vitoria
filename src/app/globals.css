@@ -13,6 +13,7 @@ button, a { cursor: pointer; }
 .admin-tabs [data-admin-tab] { display: none; }
 .admin-tabs.admin-tab-pedidos [data-admin-tab="pedidos"],
 .admin-tabs.admin-tab-rotas [data-admin-tab="rotas"],
+.admin-tabs.admin-tab-produtos [data-admin-tab="produtos"],
 .admin-tabs.admin-tab-revendedores [data-admin-tab="revendedores"],
 .admin-tabs.admin-tab-clientes [data-admin-tab="clientes"] { display: block; }
 .admin-tabs.admin-tab-rotas [data-admin-tab="rotas"] { display: grid; }
