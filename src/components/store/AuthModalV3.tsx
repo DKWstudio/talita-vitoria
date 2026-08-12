@@ -61,7 +61,12 @@ export default function AuthModalV3({ supabase, onClose, initialRegister = false
       if (!register) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
-          setMessage("E-mail ou senha inválidos.");
+          const reason = `${error.code || ""} ${error.message || ""}`.toLowerCase();
+          setMessage(
+            reason.includes("email_not_confirmed") || reason.includes("email not confirmed")
+              ? "Seu cadastro ainda aguarda a confirmação do e-mail. Abra a mensagem enviada pelo Supabase, confirme o acesso e tente novamente."
+              : "E-mail ou senha inválidos. Se não lembra a senha, use “Esqueci minha senha”.",
+          );
           return;
         }
         onClose();
