@@ -25,18 +25,34 @@ export async function logoutAdmin() { const store = await cookies(); store.delet
 export async function updateOrder(formData: FormData) {
   await requireAdmin();
   const status = value(formData, "status");
-  const allowed = ["novo", "em_contato", "confirmado", "separado", "saiu_para_entrega", "entregue", "cancelado"];
-  if (!allowed.includes(status)) throw new Error("Status inválido");
+  if (!["novo", "em_contato", "confirmado", "separado", "saiu_para_entrega", "entregue", "cancelado"].includes(status)) throw new Error("Status inválido");
   const { error } = await createServiceSupabaseClient().from("orders").update({ status, admin_notes: value(formData, "admin_notes", false) || null, delivery_date: value(formData, "delivery_date", false) || null, updated_at: new Date().toISOString() }).eq("id", value(formData, "id"));
+  if (error) throw new Error(error.message); refresh();
+}
+
+export async function reviewResellerDocument(formData: FormData) {
+  await requireAdmin();
+  const status = value(formData, "status");
+  if (!["aprovado", "rejeitado"].includes(status)) throw new Error("Status de documento inválido");
+  const { error } = await createServiceSupabaseClient().from("reseller_documents").update({ status, admin_notes: value(formData, "admin_notes", false) || null, reviewed_at: new Date().toISOString() }).eq("id", value(formData, "id"));
   if (error) throw new Error(error.message); refresh();
 }
 
 export async function updateReseller(formData: FormData) {
   await requireAdmin();
-  const id = value(formData, "id"); const decision = value(formData, "decision");
+  const id = value(formData, "id");
+  const decision = value(formData, "decision");
   if (!["aprovado", "reprovado"].includes(decision)) throw new Error("Decisão inválida");
-  const payload = decision === "aprovado" ? { perfil: "revendedor", revendedor_status: "aprovado", revendedor_aprovado_em: new Date().toISOString(), admin_notes: value(formData, "admin_notes", false) || null } : { revendedor_status: "reprovado", admin_notes: value(formData, "admin_notes", false) || null };
-  const { error } = await createServiceSupabaseClient().from("users").update(payload).eq("id", id);
+  const db = createServiceSupabaseClient();
+  if (decision === "aprovado") {
+    const { count, error: documentsError } = await db.from("reseller_documents").select("id", { count: "exact", head: true }).eq("user_id", id).eq("status", "aprovado");
+    if (documentsError) throw new Error(documentsError.message);
+    if ((count ?? 0) < 4) throw new Error("A aprovação exige os quatro documentos marcados como aprovados.");
+  }
+  const payload = decision === "aprovado"
+    ? { perfil: "revendedor", revendedor_status: "aprovado", revendedor_aprovado_em: new Date().toISOString(), admin_notes: value(formData, "admin_notes", false) || null }
+    : { revendedor_status: "reprovado", admin_notes: value(formData, "admin_notes", false) || null };
+  const { error } = await db.from("users").update(payload).eq("id", id);
   if (error) throw new Error(error.message); refresh();
 }
 
