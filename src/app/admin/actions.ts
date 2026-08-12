@@ -100,7 +100,7 @@ export async function createDeliveryRoute(formData: FormData) {
     routeError(`A rota não foi criada: ${ordersError.message}`);
   }
   refresh();
-  redirect(`/admin/rotas/${routeId}/romaneio`);
+  redirect("/admin?aba=rotas&rota_criada=1");
 }
 
 export async function deleteDeliveryRoute(formData: FormData) {
