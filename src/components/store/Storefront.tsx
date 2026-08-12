@@ -51,7 +51,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
         solicitouRevendedor: Boolean(profile.solicitou_revendedor),
         revendedorStatus: String(profile.revendedor_status ?? ""),
         telefone: String(profile.telefone ?? ""),
-        endereco: `${profile.logradouro}, ${profile.numero} � ${profile.bairro}, ${profile.cidade} � CEP ${profile.cep}`,
+        endereco: `${profile.logradouro}, ${profile.numero} · ${profile.bairro}, ${profile.cidade} · CEP ${profile.cep}`,
       });
     };
     load();
