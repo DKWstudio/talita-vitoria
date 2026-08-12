@@ -77,6 +77,7 @@ export default function AuthModalV3({ supabase, onClose, initialRegister = false
         email,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             ...Object.fromEntries(form.entries()),
             tipo_cadastro: purpose === "revender" ? "revendedor" : "cliente",
@@ -103,6 +104,18 @@ export default function AuthModalV3({ supabase, onClose, initialRegister = false
       redirectTo: `${window.location.origin}/redefinir-senha`,
     });
     setMessage(error ? error.message : "Enviamos um link de recuperação para seu e-mail.");
+  };
+
+  const resendConfirmation = async () => {
+    if (!supabase) return;
+    const email = window.prompt("Informe o e-mail que você cadastrou:");
+    if (!email) return;
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/` },
+    });
+    setMessage(error ? error.message : "Enviamos uma nova confirmação. Abra o e-mail mais recente e clique no link.");
   };
 
   const ownDelivery = address.cidade && hasTalitaDelivery(address.cidade);
@@ -177,7 +190,7 @@ export default function AuthModalV3({ supabase, onClose, initialRegister = false
           <button disabled={submitting} className="rounded-xl bg-[#A95765] py-3 font-bold text-white disabled:opacity-60 sm:col-span-2">{submitting ? "Aguarde…" : register ? "Criar cadastro" : "Entrar"}</button>
           {message && <p className="text-sm text-[#A95765] sm:col-span-2">{message}</p>}
         </form>
-        {!register && <button onClick={recoverPassword} className="mt-4 w-full text-sm font-bold text-[#A95765]">Esqueci minha senha</button>}
+        {!register && <div className="mt-4 grid gap-2 sm:grid-cols-2"><button onClick={recoverPassword} className="text-sm font-bold text-[#A95765]">Esqueci minha senha</button><button onClick={resendConfirmation} className="text-sm font-bold text-[#A95765]">Reenviar confirmação</button></div>}
         <button onClick={() => { setRegister(!register); setMessage(""); }} className="mt-3 w-full text-sm font-bold text-[#A95765]">{register ? "Já tenho cadastro" : "Ainda não tenho cadastro"}</button>
       </section>
     </div>
