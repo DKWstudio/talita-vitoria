@@ -26,8 +26,14 @@ export async function updateOrder(formData: FormData) {
   await requireAdmin();
   const status = value(formData, "status");
   if (!["novo", "em_contato", "confirmado", "separado", "saiu_para_entrega", "entregue", "cancelado"].includes(status)) throw new Error("Status inválido");
-  const { error } = await createServiceSupabaseClient().from("orders").update({ status, admin_notes: value(formData, "admin_notes", false) || null, delivery_date: value(formData, "delivery_date", false) || null, updated_at: new Date().toISOString() }).eq("id", value(formData, "id"));
+  const db = createServiceSupabaseClient();
+  const orderId = value(formData, "id");
+  const adminNotes = value(formData, "admin_notes", false) || null;
+  const deliveryDate = value(formData, "delivery_date", false) || null;
+  const { error } = await db.from("orders").update({ status, admin_notes: adminNotes, delivery_date: deliveryDate, updated_at: new Date().toISOString() }).eq("id", orderId);
   if (error) throw new Error(error.message); refresh();
+  const { error: historyError } = await db.from("order_history").insert({ order_id: orderId, status, admin_notes: adminNotes, delivery_date: deliveryDate });
+  if (historyError) throw new Error(historyError.message);
 }
 
 export async function reviewResellerDocument(formData: FormData) {
