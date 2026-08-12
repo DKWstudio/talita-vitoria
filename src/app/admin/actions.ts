@@ -22,6 +22,35 @@ export async function loginAdmin(formData: FormData) {
 }
 export async function logoutAdmin() { const store = await cookies(); store.delete(adminCookieName); redirect("/admin"); }
 
+
+export async function syncCatalogProducts() {
+  await requireAdmin();
+  const { talitaProducts } = await import("@/data/talitaProducts");
+  const db = createServiceSupabaseClient();
+  const rows = talitaProducts.map((product) => ({ id: product.id, title: product.name, description: product.description ?? null, category: product.category, image_url: product.image, product_url: product.url, preco_cliente_base: product.price, preco_revendedor_atacado: product.wholesalePrice ?? Number((product.price * 0.75).toFixed(2)) }));
+  const { error } = await db.from("catalog_products").upsert(rows, { onConflict: "id", ignoreDuplicates: true });
+  if (error) throw new Error(error.message);
+  refresh();
+  redirect("/admin?aba=produtos");
+}
+
+export async function updateCatalogProduct(formData: FormData) {
+  await requireAdmin();
+  const db = createServiceSupabaseClient();
+  const id = value(formData, "id");
+  const customer = Number(value(formData, "preco_cliente_base"));
+  const reseller = Number(value(formData, "preco_revendedor_atacado"));
+  if (!Number.isFinite(customer) || !Number.isFinite(reseller) || customer < 0 || reseller < 0) throw new Error("Pre?os inv?lidos.");
+  const { data: previous, error: previousError } = await db.from("catalog_products").select("preco_cliente_base,preco_revendedor_atacado").eq("id", id).single();
+  if (previousError || !previous) throw new Error(previousError?.message ?? "Produto n?o encontrado.");
+  const payload = { title: value(formData, "title"), description: value(formData, "description", false) || null, category: value(formData, "category"), image_url: value(formData, "image_url", false) || null, preco_cliente_base: customer, preco_revendedor_atacado: reseller, is_active: formData.get("is_active") === "on", updated_at: new Date().toISOString() };
+  const { error } = await db.from("catalog_products").update(payload).eq("id", id);
+  if (error) throw new Error(error.message);
+  if (Number(previous.preco_cliente_base) !== customer || Number(previous.preco_revendedor_atacado) !== reseller) await db.from("product_price_history").insert({ product_id: id, preco_cliente_anterior: previous.preco_cliente_base, preco_cliente_novo: customer, preco_revendedor_anterior: previous.preco_revendedor_atacado, preco_revendedor_novo: reseller });
+  refresh();
+  redirect("/admin?aba=produtos");
+}
+
 export async function updateOrder(formData: FormData) {
   await requireAdmin();
   const status = value(formData, "status");
