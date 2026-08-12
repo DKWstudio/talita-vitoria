@@ -34,6 +34,15 @@ export async function updateOrder(formData: FormData) {
   if (error) throw new Error(error.message); refresh();
   const { error: historyError } = await db.from("order_history").insert({ order_id: orderId, status, admin_notes: adminNotes, delivery_date: deliveryDate });
   if (historyError) throw new Error(historyError.message);
+  redirect("/admin?aba=pedidos");
+}
+
+export async function deleteOrder(formData: FormData) {
+  await requireAdmin();
+  const { error } = await createServiceSupabaseClient().from("orders").delete().eq("id", value(formData, "id"));
+  if (error) throw new Error(error.message);
+  refresh();
+  redirect("/admin?aba=pedidos");
 }
 
 export async function reviewResellerDocument(formData: FormData) {
