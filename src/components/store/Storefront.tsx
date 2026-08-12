@@ -9,7 +9,7 @@ import ResellerDocuments from "@/components/store/ResellerDocuments";
 import AuthModalV3 from "@/components/store/AuthModalV3";
 
 type CartLine = { product: CatalogProduct; quantity: number };
-type Account = { id: string; nome_completo: string; perfil: UserProfile; telefone?: string; endereco?: string };
+type Account = { id: string; nome_completo: string; perfil: UserProfile; telefone?: string; endereco?: string; solicitouRevendedor?: boolean; revendedorStatus?: string };
 
 const money = (value: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 const preferredCategories = ["Todos", "Cobre Leito", "Lençóis", "Toalhas", "Infantil", "Banheiro", "Cortinas", "Cozinha", "Almofadas"];
@@ -29,6 +29,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
   const [authOpen, setAuthOpen] = useState(false);
   const [startRegistration, setStartRegistration] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [documentsCompleted, setDocumentsCompleted] = useState(false);
   const categories = useMemo(() => [
     ...preferredCategories.filter((item) => item === "Todos" || products.some((product) => product.category === item)),
     ...Array.from(new Set(products.map((product) => product.category))).filter((item) => !preferredCategories.includes(item)),
@@ -42,10 +43,12 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
     const load = async () => {
       const { data } = await supabase.auth.getUser();
       if (!data.user) return;
-      const { data: profile } = await supabase.from("users").select("id,nome_completo,perfil,telefone,logradouro,numero,bairro,cidade,cep").eq("id", data.user.id).single();
+      const { data: profile } = await supabase.from("users").select("id,nome_completo,perfil,telefone,logradouro,numero,bairro,cidade,cep,solicitou_revendedor,revendedor_status").eq("id", data.user.id).single();
       if (profile) setAccount({
         id: String(profile.id), nome_completo: String(profile.nome_completo),
         perfil: profile.perfil === "revendedor" ? "revendedor" : "cliente",
+        solicitouRevendedor: Boolean(profile.solicitou_revendedor),
+        revendedorStatus: String(profile.revendedor_status ?? ""),
         telefone: String(profile.telefone ?? ""),
         endereco: `${profile.logradouro}, ${profile.numero} � ${profile.bairro}, ${profile.cidade} � CEP ${profile.cep}`,
       });
@@ -132,7 +135,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
           </div>
         </div>
       </footer>
-      {account?.perfil === "cliente" && <div className="fixed bottom-4 left-4 z-30 w-[min(26rem,calc(100vw-2rem))] rounded-2xl border border-[#ead8d2] bg-white p-4 shadow-xl"><p className="font-serif font-bold text-[#34445f]">Solicitou cadastro de revendedor?</p><p className="mt-1 text-xs text-stone-600">Se esta solicitação foi feita no seu cadastro, envie os documentos para análise segura.</p><details className="mt-3"><summary className="cursor-pointer text-sm font-bold text-[#A95765]">Enviar documentos de revendedor</summary><ResellerDocuments /></details></div>}{authOpen && <AuthModalV3 initialRegister={startRegistration} supabase={supabase} onClose={() => setAuthOpen(false)} />}
+      {account?.solicitouRevendedor && account.revendedorStatus === "pendente" && !documentsCompleted && <div className="fixed bottom-4 left-4 z-30 w-[min(26rem,calc(100vw-2rem))] rounded-2xl border border-[#ead8d2] bg-white p-4 shadow-xl"><p className="font-serif font-bold text-[#34445f]">Solicitou cadastro de revendedor?</p><p className="mt-1 text-xs text-stone-600">Se esta solicitação foi feita no seu cadastro, envie os documentos para análise segura.</p><details className="mt-3"><summary className="cursor-pointer text-sm font-bold text-[#A95765]">Enviar documentos de revendedor</summary><ResellerDocuments onComplete={() => setDocumentsCompleted(true)} /></details></div>}{authOpen && <AuthModalV3 initialRegister={startRegistration} supabase={supabase} onClose={() => setAuthOpen(false)} />}
       {cartOpen && <CartDrawer supabase={supabase} account={account} cart={cart} total={total} onClose={() => setCartOpen(false)} setCart={setCart} onLogin={() => { setCartOpen(false); setAuthOpen(true); }} />}
     </div>
   );
