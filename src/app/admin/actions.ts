@@ -74,6 +74,7 @@ export async function createDeliveryRoute(formData: FormData) {
     await db.from("orders").update({ status: "separado", delivery_date: value(formData, "delivery_date"), updated_at: new Date().toISOString() }).in("id", orderIds);
   }
   refresh();
+  redirect(`/admin/rotas/${route.id}/romaneio`);
 }
 
 export async function updateRouteStatus(formData: FormData) {
