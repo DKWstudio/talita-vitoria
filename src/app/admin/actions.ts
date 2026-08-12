@@ -86,19 +86,21 @@ export async function createDeliveryRoute(formData: FormData) {
   const { data: route, error } = await db.from("delivery_routes").insert({ name: value(formData, "name"), delivery_date: deliveryDate, region: value(formData, "region", false) || null, driver_name: value(formData, "driver_name", false) || null, notes: value(formData, "notes", false) || null }).select("id").single();
   if (error || !route) routeError(error?.message ?? "Não foi possível criar a rota.");
 
-  const { error: itemsError } = await db.from("delivery_route_orders").insert(orderIds.map((order_id) => ({ route_id: route.id, order_id })));
+  const routeId = route!.id;
+
+  const { error: itemsError } = await db.from("delivery_route_orders").insert(orderIds.map((order_id) => ({ route_id: routeId, order_id })));
   if (itemsError) {
-    await db.from("delivery_routes").delete().eq("id", route.id);
+    await db.from("delivery_routes").delete().eq("id", routeId);
     routeError(`A rota não foi criada: ${itemsError.message}`);
   }
 
   const { error: ordersError } = await db.from("orders").update({ status: "separado", delivery_date: deliveryDate, updated_at: new Date().toISOString() }).in("id", orderIds);
   if (ordersError) {
-    await db.from("delivery_routes").delete().eq("id", route.id);
+    await db.from("delivery_routes").delete().eq("id", routeId);
     routeError(`A rota não foi criada: ${ordersError.message}`);
   }
   refresh();
-  redirect(`/admin/rotas/${route.id}/romaneio`);
+  redirect(`/admin/rotas/${routeId}/romaneio`);
 }
 
 export async function updateRouteStatus(formData: FormData) {
