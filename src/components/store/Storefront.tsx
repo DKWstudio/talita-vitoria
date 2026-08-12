@@ -6,6 +6,7 @@ import { createPublicSupabaseClient } from "@/lib/supabase/client";
 import type { CatalogProduct, UserProfile } from "@/types/product";
 import { hasTalitaDelivery, talitaDeliveryCities } from "@/data/deliveryCities";
 import ResellerDocuments from "@/components/store/ResellerDocuments";
+import AuthModalV3 from "@/components/store/AuthModalV3";
 
 type CartLine = { product: CatalogProduct; quantity: number };
 type Account = { id: string; nome_completo: string; perfil: UserProfile; telefone?: string; endereco?: string };
@@ -129,7 +130,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
           </div>
         </div>
       </footer>
-      {account?.perfil === "cliente" && <div className="fixed bottom-4 left-4 z-30 w-[min(26rem,calc(100vw-2rem))] rounded-2xl border border-[#ead8d2] bg-white p-4 shadow-xl"><p className="font-serif font-bold text-[#34445f]">Solicitou cadastro de revendedor?</p><p className="mt-1 text-xs text-stone-600">Se esta solicitação foi feita no seu cadastro, envie os documentos para análise segura.</p><details className="mt-3"><summary className="cursor-pointer text-sm font-bold text-[#A95765]">Enviar documentos de revendedor</summary><ResellerDocuments /></details></div>}{authOpen && <AuthModalV2 supabase={supabase} onClose={() => setAuthOpen(false)} />}
+      {account?.perfil === "cliente" && <div className="fixed bottom-4 left-4 z-30 w-[min(26rem,calc(100vw-2rem))] rounded-2xl border border-[#ead8d2] bg-white p-4 shadow-xl"><p className="font-serif font-bold text-[#34445f]">Solicitou cadastro de revendedor?</p><p className="mt-1 text-xs text-stone-600">Se esta solicitação foi feita no seu cadastro, envie os documentos para análise segura.</p><details className="mt-3"><summary className="cursor-pointer text-sm font-bold text-[#A95765]">Enviar documentos de revendedor</summary><ResellerDocuments /></details></div>}{authOpen && <AuthModalV3 supabase={supabase} onClose={() => setAuthOpen(false)} />}
       {cartOpen && <CartDrawer supabase={supabase} account={account} cart={cart} total={total} onClose={() => setCartOpen(false)} setCart={setCart} onLogin={() => { setCartOpen(false); setAuthOpen(true); }} />}
     </div>
   );
