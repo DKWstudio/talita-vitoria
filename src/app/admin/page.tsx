@@ -5,28 +5,11 @@ import { loginAdmin, logoutAdmin, updateOrderStatus } from "@/app/admin/actions"
 export const dynamic = "force-dynamic";
 
 type OrderItem = { product_title: string; quantity: number; unit_price: number };
-type Order = {
-  id: string;
-  customer_name: string;
-  whatsapp: string;
-  city: string;
-  delivery_type: "propria" | "sob_consulta";
-  profile: "cliente" | "revendedor";
-  status: "novo" | "em_contato" | "confirmado" | "entregue" | "cancelado";
-  total: number;
-  created_at: string;
-  order_items: OrderItem[];
-};
-
+type Order = { id: string; customer_name: string; whatsapp: string; city: string; delivery_type: "propria" | "sob_consulta"; profile: "cliente" | "revendedor"; status: "novo" | "em_contato" | "confirmado" | "entregue" | "cancelado"; total: number; created_at: string; order_items: OrderItem[] };
 const money = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 async function getOrders(): Promise<Order[]> {
-  const { data, error } = await createServiceSupabaseClient()
-    .from("orders")
-    .select("id, customer_name, whatsapp, city, delivery_type, profile, status, total, created_at, order_items(product_title, quantity, unit_price)")
-    .order("created_at", { ascending: false })
-    .limit(100);
-
+  const { data, error } = await createServiceSupabaseClient().from("orders").select("id, customer_name, whatsapp, city, delivery_type, profile, status, total, created_at, order_items(product_title, quantity, unit_price)").order("created_at", { ascending: false }).limit(100);
   if (error) throw new Error(error.message);
   return (data ?? []) as Order[];
 }
@@ -43,8 +26,10 @@ function OrdersTable({ orders }: { orders: Order[] }) {
 export default async function AdminPage({ searchParams }: { searchParams?: Promise<{ error?: string }> }) {
   const params = searchParams ? await searchParams : {};
   if (!(await isAdminAuthenticated())) return <LoginForm hasError={params.error === "invalid-password"}/>;
-  const orders = await getOrders();
+  let orders: Order[] = [];
+  let loadError = "";
+  try { orders = await getOrders(); } catch (error) { loadError = error instanceof Error ? error.message : "Não foi possível carregar as pré-vendas."; }
   const awaiting = orders.filter((order) => order.status === "novo" || order.status === "em_contato").length;
   const total = orders.filter((order) => order.status !== "cancelado").reduce((sum, order) => sum + Number(order.total), 0);
-  return <main className="min-h-screen bg-[#fffafa] px-4 py-8 text-stone-800"><section className="mx-auto max-w-7xl space-y-7"><header className="flex flex-col gap-4 rounded-3xl bg-[#34445f] p-7 text-white md:flex-row md:items-center md:justify-between"><div><p className="text-xs font-bold uppercase tracking-[.24em] text-[#edb5bf]">Talita Vitória</p><h1 className="mt-2 font-serif text-3xl font-bold">Painel de pré-vendas</h1><p className="mt-1 text-sm text-white/75">Pedidos, atendimento e entregas da vitrine.</p></div><form action={logoutAdmin}><button className="rounded-xl border border-white/30 px-4 py-2 text-sm font-bold">Sair</button></form></header><section className="grid gap-4 sm:grid-cols-3"><div className="rounded-2xl bg-white p-5 shadow-sm"><p className="text-xs uppercase tracking-wider text-stone-500">Pré-vendas</p><p className="mt-2 text-3xl font-bold text-[#34445f]">{orders.length}</p></div><div className="rounded-2xl bg-white p-5 shadow-sm"><p className="text-xs uppercase tracking-wider text-stone-500">Aguardando atendimento</p><p className="mt-2 text-3xl font-bold text-[#a95765]">{awaiting}</p></div><div className="rounded-2xl bg-white p-5 shadow-sm"><p className="text-xs uppercase tracking-wider text-stone-500">Total em pré-vendas</p><p className="mt-2 text-3xl font-bold text-[#34445f]">{money(total)}</p></div></section><section><h2 className="font-serif text-2xl font-bold text-[#34445f]">Pedidos recentes</h2><p className="mt-1 text-sm text-stone-500">A disponibilidade e a entrega são confirmadas pela consultora.</p><div className="mt-4"><OrdersTable orders={orders}/></div></section></section></main>;
+  return <main className="min-h-screen bg-[#fffafa] px-4 py-8 text-stone-800"><section className="mx-auto max-w-7xl space-y-7"><header className="flex flex-col gap-4 rounded-3xl bg-[#34445f] p-7 text-white md:flex-row md:items-center md:justify-between"><div><p className="text-xs font-bold uppercase tracking-[.24em] text-[#edb5bf]">Talita Vitória</p><h1 className="mt-2 font-serif text-3xl font-bold">Painel de pré-vendas</h1><p className="mt-1 text-sm text-white/75">Pedidos, atendimento e entregas da vitrine.</p></div><form action={logoutAdmin}><button className="rounded-xl border border-white/30 px-4 py-2 text-sm font-bold">Sair</button></form></header>{loadError && <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-950"><p className="font-bold">A conexão ao banco precisa de atenção.</p><p className="mt-2">{loadError}</p><p className="mt-2 text-xs">Confirme se a migration <code>003_pre_orders.sql</code> foi executada e se <code>SUPABASE_SERVICE_ROLE_KEY</code> na Vercel é a chave secreta deste projeto Supabase.</p></div>}<section className="grid gap-4 sm:grid-cols-3"><div className="rounded-2xl bg-white p-5 shadow-sm"><p className="text-xs uppercase tracking-wider text-stone-500">Pré-vendas</p><p className="mt-2 text-3xl font-bold text-[#34445f]">{orders.length}</p></div><div className="rounded-2xl bg-white p-5 shadow-sm"><p className="text-xs uppercase tracking-wider text-stone-500">Aguardando atendimento</p><p className="mt-2 text-3xl font-bold text-[#a95765]">{awaiting}</p></div><div className="rounded-2xl bg-white p-5 shadow-sm"><p className="text-xs uppercase tracking-wider text-stone-500">Total em pré-vendas</p><p className="mt-2 text-3xl font-bold text-[#34445f]">{money(total)}</p></div></section><section><h2 className="font-serif text-2xl font-bold text-[#34445f]">Pedidos recentes</h2><p className="mt-1 text-sm text-stone-500">A disponibilidade e a entrega são confirmadas pela consultora.</p><div className="mt-4"><OrdersTable orders={orders}/></div></section></section></main>;
 }
