@@ -3,22 +3,22 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Download, LockKeyhole, LogIn, Minus, Plus, Search, ShoppingBag, Trash2, User, X } from "lucide-react";
 import { createPublicSupabaseClient } from "@/lib/supabase/client";
-import type { AffiliateProduct, UserProfile } from "@/types/product";
+import type { CatalogProduct, UserProfile } from "@/types/product";
 import { hasTalitaDelivery, talitaDeliveryCities } from "@/data/deliveryCities";
 
-type CartLine = { product: AffiliateProduct; quantity: number };
+type CartLine = { product: CatalogProduct; quantity: number };
 type Account = { id: string; nome_completo: string; perfil: UserProfile; telefone?: string; endereco?: string };
 
 const money = (value: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 const preferredCategories = ["Todos", "Cobre Leito", "Lençóis", "Toalhas", "Infantil", "Banheiro", "Cortinas", "Cozinha", "Almofadas"];
 
-function priceFor(product: AffiliateProduct, profile: UserProfile) {
+function priceFor(product: CatalogProduct, profile: UserProfile) {
   return profile === "revendedor"
     ? product.preco_revendedor_atacado ?? product.price
     : product.preco_cliente_base ?? product.price;
 }
 
-export default function Storefront({ products }: { products: AffiliateProduct[] }) {
+export default function Storefront({ products }: { products: CatalogProduct[] }) {
   const supabase = useMemo(() => createPublicSupabaseClient(), []);
   const [account, setAccount] = useState<Account | null>(null);
   const [query, setQuery] = useState("");
@@ -61,7 +61,7 @@ export default function Storefront({ products }: { products: AffiliateProduct[] 
   const count = cart.reduce((sum, line) => sum + line.quantity, 0);
   const total = account ? cart.reduce((sum, line) => sum + priceFor(line.product, account.perfil) * line.quantity, 0) : 0;
 
-  function add(product: AffiliateProduct) {
+  function add(product: CatalogProduct) {
     setCart((current) => current.some((line) => line.product.id === product.id)
       ? current.map((line) => line.product.id === product.id ? { ...line, quantity: line.quantity + 1 } : line)
       : [...current, { product, quantity: 1 }]);
@@ -134,7 +134,7 @@ export default function Storefront({ products }: { products: AffiliateProduct[] 
   );
 }
 
-function CollectionCard({ product }: { product: AffiliateProduct }) {
+function CollectionCard({ product }: { product: CatalogProduct }) {
   const detailsUrl = product.product_url?.startsWith("/produto/") ? product.product_url : null;
   const collectionName = product.title.startsWith("Linha ") ? product.title : product.title;
   const isBathroom = product.category === "Banheiro";

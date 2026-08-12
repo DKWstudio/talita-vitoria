@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Check, Expand, LockKeyhole, ShoppingBag, X } from "lucide-react";
 import { createPublicSupabaseClient } from "@/lib/supabase/client";
 import { aliceDetails, aliceGroups, aliceOptions } from "@/data/aliceProduct";
-import type { AffiliateProduct, UserProfile } from "@/types/product";
+import type { CatalogProduct, UserProfile } from "@/types/product";
 
 const money = (value: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -47,23 +47,19 @@ export default function ProductDetail() {
   }
 
   function addToCart() {
-    const product: AffiliateProduct = {
+    const product: CatalogProduct = {
       id: `${aliceDetails.id}-${selected.id}`,
-      source: "mercadolivre",
-      external_id: `${aliceDetails.id}-${selected.id}`,
       title: `${aliceDetails.name} — ${selected.group} ${selected.packageLabel} — ${selected.size}`,
       description: `${aliceDetails.material}, ${aliceDetails.color}`,
       category: selected.group === "Jogo de Toalha" ? "Toalhas" : selected.group === "Jogo de Lençol" ? "Lençóis" : "Cobre Leito",
       price: selected.customerPrice,
       preco_cliente_base: selected.customerPrice,
       preco_revendedor_atacado: selected.resellerPrice,
-      old_price: null, currency: "BRL", image_url: aliceDetails.image,
-      product_url: "/produto/alice", affiliate_url: null, rating: 5,
-      reviews_count: null, sold_count: null, seller_name: "Talita Vitória", seller_reputation: null,
-      is_active: true, is_featured: true, score: 100, last_checked_at: null, created_at: new Date(0).toISOString(),
+      image_url: aliceDetails.image,
+      product_url: "/produto/alice",
     };
     const stored = localStorage.getItem("talita-vitoria-cart");
-    const cart: Array<{ product: AffiliateProduct; quantity: number }> = stored ? JSON.parse(stored) : [];
+    const cart: Array<{ product: CatalogProduct; quantity: number }> = stored ? JSON.parse(stored) : [];
     const existing = cart.find((line) => line.product.id === product.id);
     if (existing) existing.quantity += 1;
     else cart.push({ product, quantity: 1 });

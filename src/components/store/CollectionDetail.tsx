@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Check, Expand, LockKeyhole, ShoppingBag, X } from "lucide-react";
 import { createPublicSupabaseClient } from "@/lib/supabase/client";
 import type { Collection, CollectionOption } from "@/data/collections";
-import type { AffiliateProduct, UserProfile } from "@/types/product";
+import type { CatalogProduct, UserProfile } from "@/types/product";
 
 const money = (value: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -62,17 +62,15 @@ export default function CollectionDetail({ collection }: { collection: Collectio
 
   function addToCart() {
     const material = selected.group === "Cobre Leito" || selected.group === "Kit Infantil" || selected.group === "Jogo de Banheiro" || selected.group === "Cortina" || selected.group === "Toalha de Mesa" || selected.group === "Tapete de Cozinha" || selected.group === "Kit de Almofadas" ? collection.coverFabric : selected.group === "Jogo de Lençol" ? collection.sheetFabric : "100% algodão";
-    const product: AffiliateProduct = {
-      id: `${collection.slug}-${selected.id}`, source: "mercadolivre", external_id: `${collection.slug}-${selected.id}`,
+    const product: CatalogProduct = {
+      id: `${collection.slug}-${selected.id}`,
       title: `${displayName}${selected.variant ? ` — ${selected.variant}` : ""} — ${selected.group} ${selected.packageLabel} — ${selected.size}`,
       description: `${material}, ${collection.color}`, category: selected.group === "Kit de Almofadas" ? "Almofadas" : selected.group === "Toalha de Mesa" || selected.group === "Tapete de Cozinha" ? "Cozinha" : selected.group === "Cortina" ? "Cortinas" : selected.group === "Jogo de Banheiro" ? "Banheiro" : selected.group === "Kit Infantil" ? "Infantil" : selected.group === "Jogo de Toalha" ? "Toalhas" : selected.group === "Jogo de Lençol" ? "Lençóis" : "Cobre Leito",
       price: selected.customerPrice, preco_cliente_base: selected.customerPrice, preco_revendedor_atacado: selected.resellerPrice,
-      old_price: null, currency: "BRL", image_url: collection.image, product_url: `/produto/${collection.slug}`, affiliate_url: null,
-      rating: 5, reviews_count: null, sold_count: null, seller_name: "Talita Vitória", seller_reputation: null,
-      is_active: true, is_featured: true, score: 100, last_checked_at: null, created_at: new Date(0).toISOString(),
+      image_url: collection.image, product_url: `/produto/${collection.slug}`,
     };
     const stored = localStorage.getItem("talita-vitoria-cart");
-    const cart: Array<{ product: AffiliateProduct; quantity: number }> = stored ? JSON.parse(stored) : [];
+    const cart: Array<{ product: CatalogProduct; quantity: number }> = stored ? JSON.parse(stored) : [];
     const existing = cart.find((line) => line.product.id === product.id);
     if (existing) existing.quantity += 1; else cart.push({ product, quantity: 1 });
     localStorage.setItem("talita-vitoria-cart", JSON.stringify(cart));

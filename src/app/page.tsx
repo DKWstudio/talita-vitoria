@@ -1,8 +1,6 @@
 import Storefront from "@/components/store/Storefront";
-import { getActiveProducts } from "@/lib/products";
-
-export const dynamic = "force-dynamic";
+import { getCatalogProducts } from "@/lib/products";
 
 export default async function Home() {
-  return <Storefront products={await getActiveProducts()} />;
+  return <Storefront products={await getCatalogProducts()} />;
 }
