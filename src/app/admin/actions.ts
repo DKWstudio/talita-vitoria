@@ -103,6 +103,23 @@ export async function createDeliveryRoute(formData: FormData) {
   redirect(`/admin/rotas/${routeId}/romaneio`);
 }
 
+export async function deleteDeliveryRoute(formData: FormData) {
+  await requireAdmin();
+  const id = value(formData, "id");
+  const db = createServiceSupabaseClient();
+  const { data: links, error: linksError } = await db.from("delivery_route_orders").select("order_id").eq("route_id", id);
+  if (linksError) throw new Error(linksError.message);
+  const orderIds = (links ?? []).map((item) => item.order_id);
+  const { error } = await db.from("delivery_routes").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  if (orderIds.length) {
+    const { error: ordersError } = await db.from("orders").update({ status: "confirmado", delivery_date: null, updated_at: new Date().toISOString() }).in("id", orderIds);
+    if (ordersError) throw new Error(ordersError.message);
+  }
+  refresh();
+  redirect("/admin?aba=rotas");
+}
+
 export async function updateRouteStatus(formData: FormData) {
   await requireAdmin(); const status = value(formData, "status");
   if (!["planejada", "em_rota", "concluida", "cancelada"].includes(status)) throw new Error("Status inválido");
