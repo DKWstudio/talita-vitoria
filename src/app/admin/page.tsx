@@ -47,9 +47,10 @@ function AdminLogin() {
   return <main className="min-h-screen bg-[#34445f] px-4 py-16 text-white"><section className="mx-auto max-w-md rounded-3xl bg-white/10 p-7"><p className="text-xs font-bold uppercase tracking-[.24em] text-[#edb5bf]">Talita Vitória</p><h1 className="mt-2 font-serif text-3xl font-bold">Painel administrativo</h1><form action={loginAdmin} className="mt-6 space-y-4"><input name="password" type="password" required placeholder="Senha" className="w-full rounded-xl bg-white px-4 py-3 text-stone-900" /><button className="w-full rounded-xl bg-[#d98493] py-3 font-bold">Entrar</button></form></section></main>;
 }
 
-export default async function Admin({ searchParams }: { searchParams: Promise<{ busca?: string; status?: string; cidade?: string; inicio?: string; fim?: string }> }) {
+export default async function Admin({ searchParams }: { searchParams: Promise<{ aba?: string; busca?: string; status?: string; cidade?: string; inicio?: string; fim?: string }> }) {
   if (!(await isAdminAuthenticated())) return <AdminLogin />;
   const filters = await searchParams;
+  const activeTab = ["pedidos", "rotas", "revendedores", "clientes"].includes(filters.aba ?? "") ? filters.aba! : "pedidos";
   let data = { orders: [] as Order[], users: [] as User[], routes: [] as Route[], documents: [] as ResellerDocument[] };
   let error = "";
   try { data = await getData(); } catch (exception) { error = exception instanceof Error ? exception.message : "Erro ao carregar dados"; }
@@ -68,7 +69,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   });
 
   return <main className="min-h-screen bg-[#fffafa] px-4 py-7 text-stone-800"><section className="mx-auto max-w-7xl space-y-8">
-    <header className="flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-[#34445f] p-7 text-white"><div><p className="text-xs font-bold uppercase tracking-[.24em] text-[#edb5bf]">Talita Vitória</p><h1 className="mt-2 font-serif text-3xl font-bold">Central de vendas</h1><p className="mt-1 text-sm text-white/75">Pedidos, cadastros e planejamento de entregas.</p></div><form action={logoutAdmin}><button className="rounded-xl border border-white/30 px-4 py-2 text-sm font-bold">Sair</button></form></header>
+    <header className="rounded-3xl bg-[#34445f] p-7 text-white"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.24em] text-[#edb5bf]">Talita Vitória</p><h1 className="mt-2 font-serif text-3xl font-bold">Central de vendas</h1><p className="mt-1 text-sm text-white/75">Pedidos, cadastros e planejamento de entregas.</p></div><form action={logoutAdmin}><button className="rounded-xl border border-white/30 px-4 py-2 text-sm font-bold">Sair</button></form></div><nav className="mt-6 flex gap-2 overflow-x-auto pb-1">{[{key:"pedidos",label:"Pedidos e atendimento"},{key:"rotas",label:"Criar rota de entrega"},{key:"revendedores",label:"Análise de revendedores"},{key:"clientes",label:"Clientes e revendedores"}].map((tab)=><a key={tab.key} href={`/admin?aba=${tab.key}`} className={`whitespace-nowrap rounded-xl px-4 py-3 text-sm font-bold ${activeTab===tab.key?"bg-[#f1c1c8] text-[#34445f]":"bg-white/10 text-white hover:bg-white/20"}`}>{tab.label}</a>)}</nav></header>
     {error && <div className="rounded-2xl bg-amber-50 p-5 text-amber-900"><b>Banco precisa de atenção.</b><p className="mt-1">{error}</p><p className="mt-2 text-xs">Execute a migration <code>004_operations_dashboard.sql</code> no Supabase SQL Editor.</p></div>}
     <div className="grid gap-4 sm:grid-cols-4"><Metric title="Pedidos ativos" value={activeOrders.length} /><Metric title="Aguardando contato" value={data.orders.filter((order) => ["novo", "em_contato"].includes(order.status)).length} /><Metric title="Revendedores pendentes" value={pendingResellers.length} /><Metric title="Rotas planejadas" value={data.routes.filter((route) => ["planejada", "em_rota"].includes(route.status)).length} /></div>
 
