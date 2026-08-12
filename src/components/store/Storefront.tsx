@@ -27,6 +27,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
   const [category, setCategory] = useState("Todos");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [authOpen, setAuthOpen] = useState(false);
+  const [startRegistration, setStartRegistration] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const categories = useMemo(() => [
     ...preferredCategories.filter((item) => item === "Todos" || products.some((product) => product.category === item)),
@@ -79,9 +80,10 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
             Autorizada Bordados Vitória <span className="text-[#D3ABB1]">•</span> Chapecó e Região
           </p>
           <div className="flex items-center justify-end gap-1.5 sm:gap-2">
-            <button onClick={() => account ? supabase?.auth.signOut().then(() => setAccount(null)) : setAuthOpen(true)} className="flex items-center gap-1.5 rounded-full px-2.5 py-2 text-xs font-bold text-[#A95765] hover:bg-rose-50 sm:px-4 sm:text-sm">
+            <button onClick={() => account ? supabase?.auth.signOut().then(() => setAccount(null)) : (setStartRegistration(false), setAuthOpen(true))} className="flex items-center gap-1.5 rounded-full px-2.5 py-2 text-xs font-bold text-[#A95765] hover:bg-rose-50 sm:px-4 sm:text-sm">
               {account ? <User size={17} /> : <LogIn size={17} />}<span className="hidden sm:inline">{account ? account.nome_completo.split(" ")[0] : "Entrar"}</span>
             </button>
+            {!account && <button onClick={() => { setStartRegistration(true); setAuthOpen(true); }} className="rounded-full border border-[#D3ABB1] px-3 py-2 text-xs font-bold text-[#A95765] hover:bg-rose-50 sm:px-4 sm:text-sm">Cadastrar</button>}
             <button onClick={() => setCartOpen(true)} aria-label={`Abrir carrinho com ${count} itens`} className="relative flex items-center gap-2 rounded-full bg-[#A95765] px-3 py-2.5 text-xs font-bold text-white sm:px-4 sm:text-sm"><ShoppingBag size={18} /><span className="hidden sm:inline">Carrinho</span>{count > 0 && <span className="rounded-full bg-white px-1.5 text-[11px] text-[#A95765]">{count}</span>}</button>
           </div>
         </div>
@@ -130,7 +132,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
           </div>
         </div>
       </footer>
-      {account?.perfil === "cliente" && <div className="fixed bottom-4 left-4 z-30 w-[min(26rem,calc(100vw-2rem))] rounded-2xl border border-[#ead8d2] bg-white p-4 shadow-xl"><p className="font-serif font-bold text-[#34445f]">Solicitou cadastro de revendedor?</p><p className="mt-1 text-xs text-stone-600">Se esta solicitação foi feita no seu cadastro, envie os documentos para análise segura.</p><details className="mt-3"><summary className="cursor-pointer text-sm font-bold text-[#A95765]">Enviar documentos de revendedor</summary><ResellerDocuments /></details></div>}{authOpen && <AuthModalV3 supabase={supabase} onClose={() => setAuthOpen(false)} />}
+      {account?.perfil === "cliente" && <div className="fixed bottom-4 left-4 z-30 w-[min(26rem,calc(100vw-2rem))] rounded-2xl border border-[#ead8d2] bg-white p-4 shadow-xl"><p className="font-serif font-bold text-[#34445f]">Solicitou cadastro de revendedor?</p><p className="mt-1 text-xs text-stone-600">Se esta solicitação foi feita no seu cadastro, envie os documentos para análise segura.</p><details className="mt-3"><summary className="cursor-pointer text-sm font-bold text-[#A95765]">Enviar documentos de revendedor</summary><ResellerDocuments /></details></div>}{authOpen && <AuthModalV3 initialRegister={startRegistration} supabase={supabase} onClose={() => setAuthOpen(false)} />}
       {cartOpen && <CartDrawer supabase={supabase} account={account} cart={cart} total={total} onClose={() => setCartOpen(false)} setCart={setCart} onLogin={() => { setCartOpen(false); setAuthOpen(true); }} />}
     </div>
   );
