@@ -1,9 +1,28 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CollectionDetail from "@/components/store/CollectionDetail";
 import { getCollection } from "@/data/collections";
 import { getCatalogProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const collection = getCollection(slug);
+  if (!collection) return {};
+
+  const managedProduct = (await getCatalogProducts()).find((product) => product.product_url === `/produto/${slug}`);
+  const title = managedProduct?.title || collection.name;
+  const description = managedProduct?.description || `Conheça ${collection.name}, disponível para pré-venda com atendimento em Chapecó e Região.`;
+  const image = managedProduct?.image_url || collection.image;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/produto/${slug}` },
+    openGraph: { title, description, images: image ? [{ url: image, alt: title }] : undefined },
+  };
+}
 
 export default async function CollectionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
