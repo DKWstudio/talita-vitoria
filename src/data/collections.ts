@@ -5,7 +5,7 @@ export type CollectionOption = {
 };
 export type Collection = {
   slug: string; name: string; page: number; image: string; color: string;
-  coverFabric: string; sheetFabric: string; options: CollectionOption[]; extraImages?: string[]; priceOnRequest?: boolean; imagePosition?: string;
+  coverFabric: string; sheetFabric: string; options: CollectionOption[]; extraImages?: string[]; galleryImages?: string[]; priceOnRequest?: boolean; imagePosition?: string;
 };
 
 const sizes = ["Casal", "Queen", "Super King"] as const;

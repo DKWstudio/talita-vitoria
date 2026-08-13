@@ -32,6 +32,7 @@ export interface CatalogProduct {
   product_url: string;
   preco_cliente_base?: number;
   preco_revendedor_atacado?: number;
+  gallery_images?: { url: string; path?: string }[];
 }
 
 export type UserProfile = "cliente" | "revendedor";
