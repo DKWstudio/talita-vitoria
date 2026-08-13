@@ -81,7 +81,6 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
         <div className="mx-auto grid max-w-7xl grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 px-4 py-3 md:grid-cols-[1fr_auto_1fr]">
           <div className="flex items-center gap-2 sm:gap-3">
             <img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-10 w-auto object-contain sm:h-12" />
-            <a href="https://www.instagram.com/bordadosvitoriavendas/" target="_blank" rel="noreferrer" aria-label="Acessar Instagram Bordados Vitória Vendas" title="Instagram Bordados Vitória Vendas" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#e6c5ca] bg-white text-[#A95765] transition hover:bg-[#A95765] hover:text-white sm:h-10 sm:w-10"><Instagram size={19} /></a>
           </div>
           <p className="order-3 col-span-2 text-center text-[10px] font-bold uppercase tracking-[.16em] text-[#A95765] md:order-none md:col-span-1 md:text-xs">
             Autorizada Bordados Vitória <span className="text-[#D3ABB1]">•</span> Chapecó e Região
@@ -91,6 +90,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
               {account ? <User size={17} /> : <LogIn size={17} />}<span className="hidden sm:inline">{account ? account.nome_completo.split(" ")[0] : "Entrar"}</span>
             </button>
             {!account && <button onClick={() => { setStartRegistration(true); setAuthOpen(true); }} className="rounded-full border border-[#D3ABB1] px-3 py-2 text-xs font-bold text-[#A95765] hover:bg-rose-50 sm:px-4 sm:text-sm">Cadastrar</button>}
+            <a href="https://www.instagram.com/bordadosvitoriavendas/" target="_blank" rel="noreferrer" aria-label="Instagram Talita Vitória" title="Instagram Talita Vitória" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#e6c5ca] bg-white text-[#A95765] transition hover:bg-[#A95765] hover:text-white sm:h-10 sm:w-10"><Instagram size={19} /></a>
             <button onClick={() => setCartOpen(true)} aria-label={`Abrir carrinho com ${count} itens`} className="relative flex items-center gap-2 rounded-full bg-[#A95765] px-3 py-2.5 text-xs font-bold text-white sm:px-4 sm:text-sm"><ShoppingBag size={18} /><span className="hidden sm:inline">Carrinho</span>{count > 0 && <span className="rounded-full bg-white px-1.5 text-[11px] text-[#A95765]">{count}</span>}</button>
           </div>
         </div>
