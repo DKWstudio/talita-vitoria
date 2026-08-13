@@ -122,22 +122,22 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
       <section className="mx-auto mt-4 max-w-7xl px-4 pb-10"><div className="overflow-hidden rounded-[2rem] bg-[#4B5A72] px-6 py-8 text-white shadow-lg sm:px-10"><div className="grid items-center gap-6 md:grid-cols-[1fr_auto]"><div><p className="text-xs font-black uppercase tracking-[.22em] text-[#f0c1c8]">Parceria Talita Vitória</p><h2 className="mt-2 font-serif text-3xl font-bold">Quer revender Bordados Vitória?</h2><p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-100">Solicite seu cadastro de revendedor. Após análise cadastral e aprovação pela consultora, sua conta recebe acesso à tabela exclusiva de atacado.</p></div><button onClick={() => { setStartRegistration(true); setAuthOpen(true); }} className="rounded-xl bg-[#f1c1c8] px-6 py-4 text-sm font-black text-[#4B5A72] transition hover:bg-white">Quero ser revendedor</button></div></div></section>
       <footer className="mt-10 border-t-4 border-[#D3ABB1] bg-[#36445b] px-5 py-10 text-sm text-slate-200">
         <div className="mx-auto grid max-w-7xl items-center gap-9 text-center md:grid-cols-[1.1fr_0.75fr_0.85fr_0.9fr] md:text-left">
-          <div>
+          <div className="order-1">
             <img src="/brand/talita-vitoria-floral.jpeg" alt="Enxovais Talita Vitória" className="mx-auto h-32 w-auto max-w-full rounded-xl object-cover shadow-lg" />
             <p className="mt-4 text-center text-xs leading-relaxed text-slate-300">Pré-venda sem pagamento online.<br />Valores, cobrança e entrega confirmados pela consultora.</p>
           </div>
-          <div className="flex flex-col items-center justify-center md:border-x md:border-white/10 md:px-6">
+          <div className="order-3 flex flex-col items-center justify-center md:border-x md:border-white/10 md:px-6">
             <img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-auto w-48 rounded-xl bg-white px-4 py-3 object-contain" />
             <p className="mt-4 text-center text-xs font-normal leading-relaxed text-slate-300">Revenda Autorizada Bordados Vitória • Chapecó e Região</p>
           </div>
-          <div className="text-center">
+          <div className="order-4 text-center">
             <p className="text-[11px] uppercase tracking-[.18em] text-slate-400">Desenvolvido por</p>
             <a href="https://dkworksstudio.base44.app/" target="_blank" rel="noopener noreferrer" aria-label="Conheça a DK Works Studio" className="mx-auto mt-3 block w-fit rounded-xl p-2 transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-[#D3ABB1]">
               <img src="/img/dkTransparente.png" alt="DK Works Studio" className="h-auto w-44 object-contain" />
             </a>
             <p className="mt-3 text-[10px] text-slate-500">© {new Date().getFullYear()} Talita Vitória. Todos os direitos reservados.</p>
           </div>
-          <div className="text-center md:text-left">
+          <div className="order-2 text-center md:border-x md:border-white/10 md:px-6 md:text-left">
             <p className="text-[11px] font-bold uppercase tracking-[.18em] text-slate-400">Institucional</p>
             <nav className="mt-3 grid gap-2 text-xs text-slate-200">
               <a className="transition hover:text-[#f1c1c8]" href="/atendimento">Atendimento</a>
