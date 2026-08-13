@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { Download, LockKeyhole, LogIn, Minus, Plus, Search, ShoppingBag, Trash2, User, X } from "lucide-react";
+import { Download, Instagram, LockKeyhole, LogIn, Minus, Plus, Search, ShoppingBag, Trash2, User, X } from "lucide-react";
 import { createPublicSupabaseClient } from "@/lib/supabase/client";
 import type { CatalogProduct, UserProfile } from "@/types/product";
 import { hasTalitaDelivery, talitaDeliveryCities } from "@/data/deliveryCities";
@@ -79,7 +79,10 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
     <div className="min-h-screen bg-[#fffaf5] text-[#3f3a39]">
       <header className="sticky top-0 z-40 border-b border-[#ecd9d1] bg-[#fffaf5]/95 backdrop-blur">
         <div className="mx-auto grid max-w-7xl grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 px-4 py-3 md:grid-cols-[1fr_auto_1fr]">
-          <img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-10 w-auto object-contain sm:h-12" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-10 w-auto object-contain sm:h-12" />
+            <a href="https://www.instagram.com/bordadosvitoriavendas/" target="_blank" rel="noreferrer" aria-label="Acessar Instagram Bordados Vitória Vendas" title="Instagram Bordados Vitória Vendas" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#e6c5ca] bg-white text-[#A95765] transition hover:bg-[#A95765] hover:text-white sm:h-10 sm:w-10"><Instagram size={19} /></a>
+          </div>
           <p className="order-3 col-span-2 text-center text-[10px] font-bold uppercase tracking-[.16em] text-[#A95765] md:order-none md:col-span-1 md:text-xs">
             Autorizada Bordados Vitória <span className="text-[#D3ABB1]">•</span> Chapecó e Região
           </p>
