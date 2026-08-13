@@ -126,7 +126,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
             <img src="/brand/talita-vitoria-floral.jpeg" alt="Enxovais Talita Vitória" className="mx-auto h-32 w-auto max-w-full rounded-xl object-cover shadow-lg" />
             <p className="mt-4 text-center text-xs leading-relaxed text-slate-300">Pré-venda sem pagamento online.<br />Valores, cobrança e entrega confirmados pela consultora.</p>
           </div>
-          <div className="order-3 flex flex-col items-center justify-center md:border-x md:border-white/10 md:px-6">
+          <div className="order-3 flex flex-col items-center justify-center md:px-6">
             <img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-auto w-48 rounded-xl bg-white px-4 py-3 object-contain" />
             <p className="mt-4 text-center text-xs font-normal leading-relaxed text-slate-300">Revenda Autorizada Bordados Vitória • Chapecó e Região</p>
           </div>
@@ -137,7 +137,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
             </a>
             <p className="mt-3 text-[10px] text-slate-500">© {new Date().getFullYear()} Talita Vitória. Todos os direitos reservados.</p>
           </div>
-          <div className="order-2 text-center md:border-x md:border-white/10 md:px-6 md:text-left">
+          <div className="order-2 text-center md:px-6 md:text-left">
             <p className="text-[11px] font-bold uppercase tracking-[.18em] text-slate-400">Institucional</p>
             <nav className="mt-3 grid gap-2 text-xs text-slate-200">
               <a className="transition hover:text-[#f1c1c8]" href="/atendimento">Atendimento</a>
