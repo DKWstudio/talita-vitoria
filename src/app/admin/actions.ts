@@ -34,6 +34,28 @@ export async function syncCatalogProducts() {
   redirect("/admin?aba=produtos");
 }
 
+export async function uploadProductImages(formData: FormData) {
+  await requireAdmin();
+  const db = createServiceSupabaseClient();
+  const id = value(formData, "id");
+  const files = formData.getAll("images").filter((item): item is File => item instanceof File && item.size > 0);
+  if (!files.length || files.length > 3) throw new Error("Envie de uma a três imagens.");
+  const uploaded: { url: string; path: string }[] = [];
+  for (const file of files) {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 8 * 1024 * 1024) throw new Error("Use JPG, PNG ou WebP com até 8 MB.");
+    const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+    const path = id + "/" + Date.now() + "-" + crypto.randomUUID() + "." + ext;
+    const { error } = await db.storage.from("product-images").upload(path, file, { contentType: file.type, upsert: false });
+    if (error) throw new Error(error.message);
+    const { data } = db.storage.from("product-images").getPublicUrl(path);
+    uploaded.push({ path, url: data.publicUrl });
+  }
+  const { error } = await db.from("catalog_products").update({ image_url: uploaded[0].url, gallery_images: uploaded, updated_at: new Date().toISOString() }).eq("id", id);
+  if (error) throw new Error(error.message);
+  refresh();
+  redirect("/admin?aba=produtos");
+}
+
 export async function updateCatalogProduct(formData: FormData) {
   await requireAdmin();
   const db = createServiceSupabaseClient();
