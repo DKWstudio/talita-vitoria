@@ -72,10 +72,19 @@ export default function PostCreator({ products }: { products: ManagedProduct[] }
       context.fillStyle = "#f1c1c8";
       context.font = "bold 38px Arial";
       context.fillText(audience === "cliente" ? `A partir de ${money}` : "Condições para revenda", 72, height - 88);
-      const anchor = document.createElement("a");
-      anchor.download = `${product.product_url.split("/").pop() || "produto"}-${format}.png`;
-      anchor.href = canvas.toDataURL("image/png");
-      anchor.click();
+      const download = () => {
+        const anchor = document.createElement("a");
+        anchor.download = `${product.product_url.split("/").pop() || "produto"}-${format}.png`;
+        anchor.href = canvas.toDataURL("image/png");
+        anchor.click();
+      };
+      const logo = new Image();
+      logo.onload = () => {
+        context.drawImage(logo, width - 150, imageHeight + 35, 80, 80);
+        download();
+      };
+      logo.onerror = download;
+      logo.src = "/brand/talita-vitoria-icon.png";
     };
     image.src = product.image_url!;
   }
