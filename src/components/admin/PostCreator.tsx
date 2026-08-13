@@ -25,7 +25,7 @@ export default function PostCreator({ products }: { products: ManagedProduct[] }
   const money = price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const productUrl = product?.product_url ?? "";
   const priceText = audience === "cliente" ? `Valor para cliente: ${money}.` : `Condições especiais para revenda: ${money}.`;
-  const caption = product ? `✨ ${product.title}\n\n${product.description || "Enxovais e detalhes escolhidos com carinho para sua casa."}${showPrice ? `\n\n${priceText}` : ""}\n\n📲 Peça pelo WhatsApp: (49) 98856-8055\n🔗 ${productUrl}\n\n#TalitaVitoria #BordadosVitoria #Enxovais #CamaMesaEBanho #Chapeco` : "";
+  const caption = product ? `✨ ${product.title}\n\n${product.description || "Enxovais e detalhes escolhidos com carinho para sua casa."}${showPrice ? `\n\n${priceText}` : `\n\n📲 Digite *${product.title}* para valores!`}\n\nWhatsApp: (49) 98856-8055\n🔗 ${productUrl}\n\n#TalitaVitoria #BordadosVitoria #Enxovais #CamaMesaEBanho #Chapeco` : "";
 
   function createImage() {
     if (!product || !canvasRef.current) return;
@@ -49,8 +49,9 @@ export default function PostCreator({ products }: { products: ManagedProduct[] }
       const words = product.title.split(" "); let line = ""; let y = imageHeight + 155;
       words.forEach((word) => { const next = `${line}${line ? " " : ""}${word}`; if (context.measureText(next).width > width - 144 && line) { context.fillText(line, 72, y); y += 66; line = word; } else line = next; });
       if (line) context.fillText(line, 72, y);
-      context.fillStyle = "#f1c1c8"; context.font = "bold 38px Arial";
-      context.fillText(showPrice ? (audience === "cliente" ? `A partir de ${money}` : "Condições para revenda") : "Peça pelo WhatsApp", 72, height - 88);
+      const cta = showPrice ? (audience === "cliente" ? `A partir de ${money}` : "Condições para revenda") : `Digite ${product.title} para valores!`;
+      context.fillStyle = "#f1c1c8"; context.font = `bold ${cta.length > 38 ? 29 : 38}px Arial`;
+      context.fillText(cta, 72, height - 88);
       const download = () => { const anchor = document.createElement("a"); anchor.download = `${product.product_url.split("/").pop() || "produto"}-${format}.png`; anchor.href = canvas.toDataURL("image/png"); anchor.click(); };
       const logo = new Image(); logo.onload = () => { context.drawImage(logo, width - 150, imageHeight + 35, 80, 80); download(); }; logo.onerror = download; logo.src = "/brand/talita-vitoria-icon.png";
     };
