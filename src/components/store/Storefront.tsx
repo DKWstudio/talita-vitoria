@@ -37,9 +37,9 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
   ], [products]);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("login") === "1") setAuthOpen(true);
+    if (new URLSearchParams(window.location.search).get("login") === "1") window.setTimeout(() => setAuthOpen(true), 0);
     const saved = localStorage.getItem("talita-vitoria-cart");
-    if (saved) try { setCart(JSON.parse(saved)); } catch { localStorage.removeItem("talita-vitoria-cart"); }
+    if (saved) try { const savedCart = JSON.parse(saved); window.setTimeout(() => setCart(savedCart), 0); } catch { localStorage.removeItem("talita-vitoria-cart"); }
     if (!supabase) return;
     const load = async () => {
       const { data } = await supabase.auth.getUser();
@@ -51,7 +51,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
         solicitouRevendedor: Boolean(profile.solicitou_revendedor),
         revendedorStatus: String(profile.revendedor_status ?? ""),
         telefone: String(profile.telefone ?? ""),
-        endereco: `${profile.logradouro}, ${profile.numero} · ${profile.bairro}, ${profile.cidade} · CEP ${profile.cep}`,
+        endereco: `${profile.logradouro}, ${profile.numero} · ${profile.bairro}, ${profile.cidade} · CEP ${profile.cep}`,
       });
     };
     load();
@@ -204,7 +204,7 @@ function LegacyCartDrawer({ supabase, account, cart, total, onClose, setCart, on
     if (itemsError) { window.alert("Sua pré-venda foi criada, mas houve um erro ao salvar os itens. Avise a consultora."); }
     const deliveryMessage = deliveryType === "propria" ? "Entrega própria Talita Vitória disponível para esta cidade." : "Cidade atendida sob consulta; a consultora confirmará a entrega.";
     const text = `Olá, Talita! Quero finalizar esta pré-venda #${order.id.slice(0, 8)}.\n\nNome: ${data.get("nome")}\nWhatsApp: ${data.get("whatsapp")}\nEndereço: ${data.get("endereco")}\nCidade: ${city}\nPerfil: ${account.perfil}\n\nItens:\n${items}\n\nTotal: ${money(total)}\n\n${deliveryMessage}`;
-    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5549999999999";
+    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5549988568055";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   }
 

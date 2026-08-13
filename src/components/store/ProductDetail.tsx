@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { ArrowLeft, Check, Expand, LockKeyhole, ShoppingBag, X } from "lucide-react";
 import { createPublicSupabaseClient } from "@/lib/supabase/client";
 import { aliceDetails, aliceGroups, aliceOptions } from "@/data/aliceProduct";
@@ -70,7 +71,7 @@ export default function ProductDetail() {
 
   return (
     <main className="min-h-screen bg-[#fffaf5] text-[#3f3a39]">
-      <header className="border-b border-[#ecd9d1] bg-white/90"><div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4"><a href="/" className="flex items-center gap-2 text-sm font-bold text-[#A95765]"><ArrowLeft size={18} /> Voltar à vitrine</a><img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-10 w-auto object-contain" /></div></header>
+      <header className="border-b border-[#ecd9d1] bg-white/90"><div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4"><Link href="/" className="flex items-center gap-2 text-sm font-bold text-[#A95765]"><ArrowLeft size={18} /> Voltar à vitrine</Link><img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-10 w-auto object-contain" /></div></header>
 
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-10 lg:grid-cols-[1.15fr_0.85fr] lg:py-14">
         <section>
