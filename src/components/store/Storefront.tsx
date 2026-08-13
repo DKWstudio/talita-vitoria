@@ -121,7 +121,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
       </main>
       <section className="mx-auto mt-4 max-w-7xl px-4 pb-10"><div className="overflow-hidden rounded-[2rem] bg-[#4B5A72] px-6 py-8 text-white shadow-lg sm:px-10"><div className="grid items-center gap-6 md:grid-cols-[1fr_auto]"><div><p className="text-xs font-black uppercase tracking-[.22em] text-[#f0c1c8]">Parceria Talita Vitória</p><h2 className="mt-2 font-serif text-3xl font-bold">Quer revender Bordados Vitória?</h2><p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-100">Solicite seu cadastro de revendedor. Após análise cadastral e aprovação pela consultora, sua conta recebe acesso à tabela exclusiva de atacado.</p></div><button onClick={() => { setStartRegistration(true); setAuthOpen(true); }} className="rounded-xl bg-[#f1c1c8] px-6 py-4 text-sm font-black text-[#4B5A72] transition hover:bg-white">Quero ser revendedor</button></div></div></section>
       <footer className="mt-10 border-t-4 border-[#D3ABB1] bg-[#36445b] px-5 py-10 text-sm text-slate-200">
-        <div className="mx-auto grid max-w-7xl items-center gap-9 text-center md:grid-cols-[1.25fr_0.75fr_1fr] md:text-left">
+        <div className="mx-auto grid max-w-7xl items-center gap-9 text-center md:grid-cols-[1.1fr_0.75fr_0.85fr_0.9fr] md:text-left">
           <div>
             <img src="/brand/talita-vitoria-floral.jpeg" alt="Enxovais Talita Vitória" className="mx-auto h-32 w-auto max-w-full rounded-xl object-cover shadow-lg" />
             <p className="mt-4 text-center text-xs leading-relaxed text-slate-300">Pré-venda sem pagamento online.<br />Valores, cobrança e entrega confirmados pela consultora.</p>
@@ -136,6 +136,17 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
               <img src="/img/dkTransparente.png" alt="DK Works Studio" className="h-auto w-44 object-contain" />
             </a>
             <p className="mt-3 text-[10px] text-slate-500">© {new Date().getFullYear()} Talita Vitória. Todos os direitos reservados.</p>
+          </div>
+          <div className="text-center md:text-left">
+            <p className="text-[11px] font-bold uppercase tracking-[.18em] text-slate-400">Institucional</p>
+            <nav className="mt-3 grid gap-2 text-xs text-slate-200">
+              <a className="transition hover:text-[#f1c1c8]" href="/atendimento">Atendimento</a>
+              <a className="transition hover:text-[#f1c1c8]" href="/quem-somos">Quem Somos</a>
+              <a className="transition hover:text-[#f1c1c8]" href="/como-comprar">Como Comprar</a>
+              <a className="transition hover:text-[#f1c1c8]" href="/politica-de-entrega">Política de Entrega</a>
+              <a className="transition hover:text-[#f1c1c8]" href="/politica-de-trocas-e-devolucoes">Trocas e Devoluções</a>
+              <a className="transition hover:text-[#f1c1c8]" href="/politica-de-privacidade">Política de Privacidade</a>
+            </nav>
           </div>
         </div>
       </footer>

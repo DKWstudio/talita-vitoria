@@ -1,0 +1,4 @@
+import type { Metadata } from "next";
+import InstitutionalPage from "@/components/store/InstitutionalPage";
+export const metadata: Metadata = { title: "Quem Somos" };
+export default function Page() { return <InstitutionalPage title="Quem Somos" intro="Talita Vitória é Revenda Autorizada Bordados Vitória, com atendimento em Chapecó e Região." sections={[{ title: "Nossa essência", text: "Selecionamos enxovais, bordados e detalhes para cama, mesa e banho com atenção ao conforto, acabamento e beleza da sua casa." }, { title: "Atendimento próximo", text: "A Talita acompanha cada atendimento de forma pessoal, auxiliando na escolha de produtos, no cadastro de revendedores e na combinação da entrega." }, { title: "Bordados Vitória", text: "Trabalhamos com uma marca familiar reconhecida pela qualidade de seus enxovais e por sua trajetória de mais de 40 anos no segmento." }]} />; }
