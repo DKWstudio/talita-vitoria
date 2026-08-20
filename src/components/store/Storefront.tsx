@@ -175,7 +175,7 @@ function CollectionCard({ product }: { product: CatalogProduct }) {
       ) : (
         <div className="absolute inset-0 flex items-center justify-center"><ShoppingBag size={52} className="text-rose-200" /></div>
       )}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#a95765] via-[#c87878]/95 to-transparent px-4 pb-5 pt-14 text-center">
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#b96f78]/90 via-[#d99a9d]/65 to-transparent px-4 pb-5 pt-14 text-center">
         <h3 className="font-serif text-xl font-bold text-white sm:text-2xl">{collectionName}</h3>
       </div>
     </button>
