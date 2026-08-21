@@ -37,7 +37,10 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
   ], [products]);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("login") === "1") window.setTimeout(() => setAuthOpen(true), 0);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("login") === "1") window.setTimeout(() => setAuthOpen(true), 0);
+    const requestedCategory = params.get("categoria");
+    if (requestedCategory && (requestedCategory === "Todos" || products.some((product) => product.category === requestedCategory))) window.setTimeout(() => setCategory(requestedCategory), 0);
     const saved = localStorage.getItem("talita-vitoria-cart");
     if (saved) try { const savedCart = JSON.parse(saved); window.setTimeout(() => setCart(savedCart), 0); } catch { localStorage.removeItem("talita-vitoria-cart"); }
     if (!supabase) return;
@@ -57,7 +60,7 @@ export default function Storefront({ products }: { products: CatalogProduct[] })
     load();
     const { data } = supabase.auth.onAuthStateChange(() => load());
     return () => data.subscription.unsubscribe();
-  }, [supabase]);
+  }, [supabase, products]);
 
   useEffect(() => { localStorage.setItem("talita-vitoria-cart", JSON.stringify(cart)); }, [cart]);
 
@@ -166,7 +169,7 @@ function CollectionCard({ product }: { product: CatalogProduct }) {
   return (
     <button
       type="button"
-      onClick={() => { if (detailsUrl) window.location.href = detailsUrl; }}
+      onClick={() => { if (detailsUrl) window.location.href = `${detailsUrl}?categoria=${encodeURIComponent(product.category)}`; }}
       className={`group relative aspect-[4/5] overflow-hidden rounded-3xl bg-[#eee3dc] text-left shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl ${detailsUrl ? "cursor-pointer" : "cursor-default"}`}
       aria-label={detailsUrl ? `Abrir produtos da ${collectionName}` : collectionName}
     >

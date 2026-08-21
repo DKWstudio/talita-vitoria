@@ -32,6 +32,7 @@ export default function CollectionDetail({ collection }: { collection: Collectio
   const [selectedId, setSelectedId] = useState(first.id);
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [added, setAdded] = useState(false);
+  const [returnCategory, setReturnCategory] = useState("Todos");
   const variants = Array.from(new Set(collection.options.map((option) => option.variant).filter((item): item is string => Boolean(item))));
   const packages = Array.from(new Set(collection.options.filter((option) => option.group === group && (option.variant ?? "") === variant).map((option) => option.packageLabel)));
   const groupOptions = collection.options.filter((option) => option.group === group && (option.variant ?? "") === variant && option.packageLabel === packageLabel);
@@ -55,6 +56,11 @@ export default function CollectionDetail({ collection }: { collection: Collectio
     const { data } = supabase.auth.onAuthStateChange(loadProfile);
     return () => data.subscription.unsubscribe();
   }, [supabase]);
+
+  useEffect(() => {
+    const category = new URLSearchParams(window.location.search).get("categoria");
+    if (category) window.setTimeout(() => setReturnCategory(category), 0);
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem("talita-vitoria-cart");
@@ -109,7 +115,7 @@ export default function CollectionDetail({ collection }: { collection: Collectio
   const highlights = ["Acabamento Bordados Vitória", `Modelo ${collection.color.toLowerCase()}`, "Pré-venda com atendimento personalizado"];
 
   return <main className="min-h-screen bg-[#fffaf5] text-[#3f3a39]">
-    <header className="sticky top-0 z-40 border-b border-[#ecd9d1] bg-white/90 backdrop-blur"><div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4"><Link href="/" className="flex items-center gap-2 text-sm font-bold text-[#A95765]"><ArrowLeft size={18} /> Voltar à vitrine</Link><div className="flex items-center gap-3"><img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-10 w-auto object-contain" /><button onClick={() => setCartOpen(true)} aria-label={`Abrir carrinho com ${count} itens`} className="relative flex items-center gap-2 rounded-full bg-[#A95765] px-3 py-2.5 text-xs font-bold text-white sm:px-4 sm:text-sm"><ShoppingBag size={18} /><span className="hidden sm:inline">Carrinho</span>{count > 0 && <span className="rounded-full bg-white px-1.5 text-[11px] text-[#A95765]">{count}</span>}</button></div></div></header>
+    <header className="sticky top-0 z-40 border-b border-[#ecd9d1] bg-white/90 backdrop-blur"><div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4"><Link href={`/?categoria=${encodeURIComponent(returnCategory)}`} className="flex items-center gap-2 text-sm font-bold text-[#A95765]"><ArrowLeft size={18} /> Voltar à vitrine</Link><div className="flex items-center gap-3"><img src="/brand/bordados-vitoria.png" alt="Bordados Vitória" className="h-10 w-auto object-contain" /><button onClick={() => setCartOpen(true)} aria-label={`Abrir carrinho com ${count} itens`} className="relative flex items-center gap-2 rounded-full bg-[#A95765] px-3 py-2.5 text-xs font-bold text-white sm:px-4 sm:text-sm"><ShoppingBag size={18} /><span className="hidden sm:inline">Carrinho</span>{count > 0 && <span className="rounded-full bg-white px-1.5 text-[11px] text-[#A95765]">{count}</span>}</button></div></div></header>
     <div className="mx-auto grid max-w-7xl gap-10 px-5 py-10 lg:grid-cols-[1.15fr_0.85fr] lg:py-14">
       <section><button onClick={() => setCatalogOpen(true)} className="group relative block aspect-[1.43] w-full overflow-hidden rounded-[2rem] bg-[#f4e8e0] text-left shadow-xl"><img src={collection.image} alt={`Produto ${collection.name}`} style={{ objectPosition: collection.imagePosition ?? "center" }} className={`h-full w-full transition duration-500 group-hover:scale-[1.02] ${collection.slug.startsWith("banheiro-") ? "object-contain" : "object-cover"}`} /><span className="absolute bottom-5 left-5 rounded-xl bg-white/95 px-5 py-3 font-serif text-2xl font-bold text-[#4B5A72] shadow-lg">{collection.name}</span><span className="absolute right-5 top-5 flex items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-xs font-bold text-white"><Expand size={15} /> Ver página do catálogo</span></button><p className="mt-3 text-center text-xs text-stone-500">Clique na foto para consultar a página {String(collection.page).padStart(2, "0")} completa do catálogo.</p></section>
       <section><p className="text-xs font-black uppercase tracking-[.22em] text-[#A95765]">{isCurtain ? "Cortinas Bordados Vitória" : isKitchen ? "Cozinha Bordados Vitória" : isPillow ? "Almofadas Bordados Vitória" : `Coleção ${collection.name}`}</p><h1 className="mt-2 font-serif text-4xl font-bold leading-tight md:text-5xl">{displayName}</h1><p className="mt-4 leading-relaxed text-stone-600">Escolha entre os produtos e tamanhos disponíveis após o cruzamento do catálogo com as listas oficiais de preços 2026.</p><div className="mt-6 flex flex-wrap gap-2"><div className="flex items-center gap-2 rounded-xl bg-[#f8e8e4] px-3 py-2 text-xs font-semibold text-[#7f4650]"><Check size={14} /> Bordados Vitória</div><div className="flex items-center gap-2 rounded-xl bg-[#f8e8e4] px-3 py-2 text-xs font-semibold text-[#7f4650]"><Check size={14} /> Entrega combinada</div></div>
